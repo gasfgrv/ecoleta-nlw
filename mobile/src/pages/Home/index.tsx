@@ -5,12 +5,13 @@ import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 
+
 const Home = () => {
   const [uf, setUf] = useState('');
   const [city, setCity] = useState('');
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
-  function handleNavigationToPoints() {
+  function handleNavigationToPoints() {    
     navigation.navigate('Points', {
       uf,
       city

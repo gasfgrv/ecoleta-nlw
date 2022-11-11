@@ -36,7 +36,7 @@ const Points = () => {
 
     const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
 
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const route = useRoute();
 
     const routeParams = route.params as Params;
@@ -61,7 +61,7 @@ const Points = () => {
 
     useEffect(() => {
         async function loadPosition() {
-            const { status } = await Location.requestPermissionsAsync();
+            const { status } = await Location.requestBackgroundPermissionsAsync()
 
             if (status !== 'granted') {
                 Alert.alert('Ops...', 'Precisamos de sua permição para obter a localização');

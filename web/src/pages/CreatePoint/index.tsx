@@ -1,15 +1,14 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
-import { Map, TileLayer, Marker } from 'react-leaflet';
 import axios from 'axios';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { FiArrowLeft } from 'react-icons/fi';
+import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet';
+import { Link, useNavigate } from 'react-router-dom';
+import Dropzone from '../../components/Dropzone';
 import api from '../../services/api';
-import Dropzone from '../../components/Dropzone'
 
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
-import { LeafletMouseEvent } from 'leaflet';
 
 interface Item {
     id: number;
@@ -44,7 +43,7 @@ const CreatePoint = () => {
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
     const [selectedFile, setSelectedFile] = useState<File>();
 
-    const history = useHistory();
+    const history = useNavigate();
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position => {
@@ -82,6 +81,13 @@ const CreatePoint = () => {
             });
     }, [selectedUf]);
 
+    useMapEvent('click', (event) => {
+        setSelectedPosition([
+            event.latlng.lat,
+            event.latlng.lng,
+        ]);
+    });
+
     function handleSelectedUf(event: ChangeEvent<HTMLSelectElement>) {
         const uf = event.target.value;
 
@@ -92,13 +98,6 @@ const CreatePoint = () => {
         const city = event.target.value;
 
         setSelectedCity(city);
-    }
-
-    function handleMapClick(event: LeafletMouseEvent) {
-        setSelectedPosition([
-            event.latlng.lat,
-            event.latlng.lng,
-        ]);
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -145,7 +144,7 @@ const CreatePoint = () => {
 
         alert('Ponto de Coleta cadastrado');
 
-        history.push('/');
+        history('/')
     }
 
     return (
@@ -193,13 +192,13 @@ const CreatePoint = () => {
                         <span>Selecione um endereço no mapa</span>
                     </legend>
 
-                    <Map center={initialPosition} zoom={15} onClick={handleMapClick}>
+                    <MapContainer center={initialPosition} zoom={15}>
                         <TileLayer
                             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
                         <Marker position={selectedPosition}></Marker>
-                    </Map>
+                    </MapContainer>
 
                     <div className="field-group">
 
